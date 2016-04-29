@@ -5,6 +5,7 @@
 #include <string.h>
 
 #define NewNode (Node*)malloc(sizeof(Node))
+#define FileName "out.txt"
 
 typedef struct Preparat
 {
@@ -20,14 +21,14 @@ typedef struct Node
 
 extern Node* root;
 
-
+void build_menu();
 void add_last(Preparat item);
 void add_first(Preparat item);
-void display();
+void display(int needfile);
 void delete_at(int id);
 int get_length();
 void save_to_file();
-void read_from_file(char *name);
+void read_from_file();
 void clear_list();
 void file_shell_sort();
 void edit_at(int index);

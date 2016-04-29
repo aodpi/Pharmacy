@@ -1,6 +1,94 @@
 #include "Func.h"
 Node* root = NewNode;
 
+void build_menu()
+{
+	Preparat p;
+menustart:
+	system("cls");
+	printf("Alegeti optiunea:\n\n");
+	printf("1. Adauga element la inceputul listei.\n");
+	printf("2. Adauga element la sfarsitul listei.\n");
+	printf("3. Afiseaza lista din memorie.\n");
+	printf("4. Afiseaza lista din fisier.\n");
+	printf("5. Sterge un element din lista.\n");
+	printf("6. Incarca lista din fisier in memorie.\n");
+	printf("7. Sterge toate elementele.\n");
+	printf("8. Sorteaza elementele in fisier dupa metoda Shell.\n");
+	printf("9. Salveaza lista in fisier.\n");
+	printf("10. Iesire din program.\n");
+	int option;
+	scanf("%d", &option);
+	switch (option)
+	{
+	case 1:
+		printf("Nume preparat:");
+		scanf("%s", &p.nume);
+		printf("Pret:");
+		scanf("%d", &p.pret);
+		printf("Este nevoie de prescriptie medicala? (Da/Nu):");
+		scanf("%s", &p.pr_med);
+		printf("Tip Preperat:");
+		scanf("%s", &p.tip);
+		add_first(p);
+		goto menustart;
+		break;
+	case 2:
+		printf("Nume preparat:");
+		scanf("%s", &p.nume);
+		printf("Pret:");
+		scanf("%d", &p.pret);
+		printf("Este nevoie de prescriptie medicala? (Da/Nu):");
+		scanf("%s", &p.pr_med);
+		printf("Tip Preperat:");
+		scanf("%s", &p.tip);
+		add_last(p);
+		break;
+	case 3:
+		display(0);
+		getch();
+		goto menustart;
+		break;
+	case 4:
+		display(1);
+		getch();
+		goto menustart;
+		break;
+	case 5:
+		printf("Indicati indexul elementului pentru a fi sters:");
+		int index;
+		scanf("%d", &index);
+		delete_at(index);
+		getch();
+		goto menustart;
+		break;
+	case 6:
+		read_from_file();
+		break;
+	case 7:
+		clear_list();
+		printf("Sters cu success!!");
+		getch();
+		goto menustart;
+		break;
+	case 8:
+		file_shell_sort();
+		getch();
+		goto menustart;
+		break;
+	case 9:
+		save_to_file();
+		goto menustart;
+		break;
+	case 10:
+		exit(0);
+		break;
+	default:
+		printf("Optiune indicata gresit.");
+		break;
+	}
+}
+
 void add_last(Preparat item)
 {
 	Node* tmp = root;
@@ -22,14 +110,17 @@ void add_first(Preparat item)
 	newitem->data = item;
 }
 
-void display()
+void display(int needfile)
 {
-	read_from_file("out.txt");
+	if (needfile == 1)
+	{
+		read_from_file();
+	}
 	Node* tmp = root;
 	for (int i = 0; i < 21; i++)
 		printf("=");
 	printf("\n");
-	while (root->next!=NULL)
+	while (root->next != NULL)
 	{
 		root = root->next;
 		printf("%d |%s |%-2s |%s \n", root->data.pret, root->data.nume, root->data.pr_med, root->data.tip);
@@ -72,6 +163,7 @@ void delete_at(int id)
 		}
 	}
 	root = tmp;
+	printf("Sters cu success!!");
 }
 
 int get_length()
@@ -89,7 +181,7 @@ int get_length()
 
 void save_to_file()
 {
-	FILE* file = fopen("out.txt", "w");
+	FILE* file = fopen(FileName, "w");
 	Node* temp = root;
 	while (root->next!=NULL)
 	{
@@ -100,10 +192,15 @@ void save_to_file()
 	fclose(file);
 }
 
-void read_from_file(char *name)
+void read_from_file()
 {
 	clear_list();
-	FILE* file = fopen(name, "r");
+	FILE* file = fopen(FileName, "r");
+	if (file==NULL)
+	{
+		printf("Eroare, fisierul nu exista");
+		return;
+	}
 	Preparat buff;
 	Node* temp = root;
 	fread(&buff, sizeof(Preparat), 1, file);
@@ -139,10 +236,15 @@ void clear_list()
 
 void file_shell_sort()
 {
-	read_from_file("out.txt");
+	read_from_file();
 	int quantity = get_length();
 	Preparat obj1, obj2;
-	FILE* file = fopen("out.txt", "r++");
+	FILE* file = fopen(FileName, "r+");
+	if (file==NULL)
+	{
+		printf("Eroare fisierul nu exista.");
+		return;
+	}
 	printf("Alegeti campul de sortare:\n\n");
 	printf("1. Pret 2. Nume 3. Prescriptie Medicala 4. Tip\n");
 	int op1;
@@ -208,18 +310,62 @@ void file_shell_sort()
 							fwrite(&obj2, sizeof(obj2), 1, file);
 						}
 						break;
+					}
+					break;
+				case 3:
+					switch (op2)
+					{
+					case 1:
+						if (strcmp(obj1.pr_med, obj2.pr_med)>0)
+						{
+							fseek(file, (j + pas) * sizeof(obj1), SEEK_SET);
+							fwrite(&obj1, sizeof(obj1), 1, file);
+							fseek(file, j * sizeof(obj2), SEEK_SET);
+							fwrite(&obj2, sizeof(obj2), 1, file);
+						}
+						break;
+					case 2:
+						if (strcmp(obj1.pr_med, obj2.pr_med)<0)
+						{
+							fseek(file, (j + pas) * sizeof(obj1), SEEK_SET);
+							fwrite(&obj1, sizeof(obj1), 1, file);
+							fseek(file, j * sizeof(obj2), SEEK_SET);
+							fwrite(&obj2, sizeof(obj2), 1, file);
+						}
+						break;
 					default:
 						break;
 					}
 					break;
-					break;
-				default:
+				case 4:
+					switch (op2)
+					{
+					case 1:
+						if (strcmp(obj1.tip, obj2.tip)>0)
+						{
+							fseek(file, (j + pas) * sizeof(obj1), SEEK_SET);
+							fwrite(&obj1, sizeof(obj1), 1, file);
+							fseek(file, j * sizeof(obj2), SEEK_SET);
+							fwrite(&obj2, sizeof(obj2), 1, file);
+						}
+						break;
+					case 2:
+						if (strcmp(obj1.tip, obj2.tip)<0)
+						{
+							fseek(file, (j + pas) * sizeof(obj1), SEEK_SET);
+							fwrite(&obj1, sizeof(obj1), 1, file);
+							fseek(file, j * sizeof(obj2), SEEK_SET);
+							fwrite(&obj2, sizeof(obj2), 1, file);
+						}
+						break;
+					}
 					break;
 				}
 			}
 		}
 	}
 	fclose(file);
+	printf("Sortare reusita.");
 }
 
 void edit_at(int index)
