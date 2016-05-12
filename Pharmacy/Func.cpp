@@ -16,9 +16,10 @@ menustart:
 	printf("7. Sterge toate elementele.\n");
 	printf("8. Sorteaza elementele in fisier dupa metoda Shell.\n");
 	printf("9. Salveaza lista in fisier.\n");
-	printf("10. Iesire din program.\n");
+	printf("10. Iesire din program.\n\n");
 	int option;
 	scanf("%d", &option);
+	system("cls");
 	switch (option)
 	{
 	case 1:
@@ -64,6 +65,7 @@ menustart:
 		break;
 	case 6:
 		read_from_file();
+		goto menustart;
 		break;
 	case 7:
 		clear_list();
@@ -117,16 +119,17 @@ void display(int needfile)
 		read_from_file();
 	}
 	Node* tmp = root;
-	for (int i = 0; i < 21; i++)
+	for (int i = 0; i < 25; i++)
 		printf("=");
 	printf("\n");
 	while (root->next != NULL)
 	{
 		root = root->next;
 		printf("%d |%s |%-2s |%s \n", root->data.pret, root->data.nume, root->data.pr_med, root->data.tip);
-	}
-	for (int i = 0; i < 21; i++)
-		printf("=");
+		for (int i = 0; i < 25; i++)
+			printf("=");
+		printf("\n");
+	}	
 	printf("\n");
 	root = tmp;
 }
@@ -163,6 +166,7 @@ void delete_at(int id)
 		}
 	}
 	root = tmp;
+	save_to_file();
 	printf("Sters cu success!!");
 }
 
