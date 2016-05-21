@@ -9,7 +9,7 @@
 
 typedef struct Preparat
 {
-	int pret;
+	int pret, term_v;
 	char nume[25], pr_med[3], tip[20];
 }Preparat;
 
@@ -32,3 +32,4 @@ void read_from_file();
 void clear_list();
 void file_shell_sort();
 void edit_at(int index);
+void print_deco(int count, char symbol);

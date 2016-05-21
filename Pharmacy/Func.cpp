@@ -4,6 +4,7 @@ Node* root = NewNode;
 void build_menu()
 {
 	Preparat p;
+	system("color 02");
 menustart:
 	system("cls");
 	printf("Alegeti optiunea:\n\n");
@@ -13,10 +14,11 @@ menustart:
 	printf("4. Afiseaza lista din fisier.\n");
 	printf("5. Sterge un element din lista.\n");
 	printf("6. Incarca lista din fisier in memorie.\n");
-	printf("7. Sterge toate elementele.\n");
+	printf("7. Sterge toate elementele listei din memorie.\n");
 	printf("8. Sorteaza elementele in fisier dupa metoda Shell.\n");
 	printf("9. Salveaza lista in fisier.\n");
-	printf("10. Iesire din program.\n\n");
+	printf("10. Modifica un element din lista.\n");
+	printf("11. Iesire din program.\n\n");
 	int option;
 	scanf("%d", &option);
 	system("cls");
@@ -44,6 +46,7 @@ menustart:
 		printf("Tip Preperat:");
 		scanf("%s", &p.tip);
 		add_last(p);
+		goto menustart;
 		break;
 	case 3:
 		display(0);
@@ -83,6 +86,12 @@ menustart:
 		goto menustart;
 		break;
 	case 10:
+		printf("\nDati indexul elementului ce necesita modificare:");
+		int ind;
+		scanf("%d", &ind);
+		edit_at(ind);
+		goto menustart;
+	case 11:
 		exit(0);
 		break;
 	default:
@@ -112,6 +121,14 @@ void add_first(Preparat item)
 	newitem->data = item;
 }
 
+void print_deco(int count, char symbol)
+{
+	printf("\t\t");
+	for (int i = 0; i < count; i++)
+		printf("%c", symbol);
+	printf("\n");
+}
+
 void display(int needfile)
 {
 	if (needfile == 1)
@@ -119,19 +136,23 @@ void display(int needfile)
 		read_from_file();
 	}
 	Node* tmp = root;
-	for (int i = 0; i < 25; i++)
-		printf("=");
+	int ind = 1;
+	print_deco(75,'+');
+	printf("\t\t|ID |Nume       |Pret       |Prescriptie medicala   |Tip medicament       |");
 	printf("\n");
+	print_deco(75,'+');
 	while (root->next != NULL)
 	{
 		root = root->next;
-		printf("%d |%s |%-2s |%s \n", root->data.pret, root->data.nume, root->data.pr_med, root->data.tip);
-		for (int i = 0; i < 25; i++)
-			printf("=");
-		printf("\n");
+		printf("\t\t|%-3d|%-10s |%-10d |%-22s |%-21s| \n", ind++, root->data.nume, root->data.pret, root->data.pr_med, root->data.tip);
+		print_deco(75,'=');
 	}	
 	printf("\n");
 	root = tmp;
+	if (needfile==1)
+	{
+		clear_list();
+	}
 }
 
 void delete_at(int id)
